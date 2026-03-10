@@ -1,0 +1,53 @@
+name: Build VoIP Matrix Windows
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.7.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          modules: 'qt5compat qtmultimedia qtwebengine'
+
+      - name: Setup MSVC
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.14
+        with:
+          cmake-version: '3.28.0'
+
+      - name: Configure CMake
+        run: |
+          cmake -B build `
+            -DLINPHONEAPP_APPLICATION_NAME="VoIP Matrix" `
+            -DLINPHONEAPP_EXECUTABLE_NAME="voipmatrix" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DENABLE_APP_PACKAGING=ON
+        shell: pwsh
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+        shell: pwsh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoIPMatrix-Windows
+          path: build/OUTPUT/
+          retention-days: 30
