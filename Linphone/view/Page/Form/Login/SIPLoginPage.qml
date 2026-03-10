@@ -53,7 +53,7 @@ LoginLayout {
 			Layout.fillWidth: true
 		},
 		RowLayout {
-			visible: !SettingsCpp.assistantHideCreateAccount
+			visible: false
             Layout.rightMargin: Utils.getSizeWithScreenRatio(51)
             spacing: Utils.getSizeWithScreenRatio(20)
 			Text {
@@ -91,7 +91,6 @@ LoginLayout {
 
 			ColumnLayout {
                 id: content
-                // rightMargin is negative margin
                 width: parent.width - scrollbar.width*2
                 spacing: Utils.getSizeWithScreenRatio(85)
 				ColumnLayout {
@@ -229,7 +228,6 @@ LoginLayout {
 									initialText: SettingsCpp.assistantThirdPartySipAccountDomain
 									Layout.preferredWidth: Utils.getSizeWithScreenRatio(360)
 									KeyNavigation.up: passwordEdit
-									KeyNavigation.down: displayName
 									//: "%1 mandatory"
 									Accessible.name: qsTr("mandatory_field_accessible_name").arg(qsTr("sip_address_domain"))
 								}
@@ -241,18 +239,18 @@ LoginLayout {
 								}
 							}
 							FormItemLayout {
+								visible: false
 								//: Nom d'affichage
 								label: qsTr("sip_address_display_name")
 								Layout.fillWidth: true
 								contentItem: TextField {
 									id: displayName
 									Layout.preferredWidth: Utils.getSizeWithScreenRatio(360)
-									KeyNavigation.up: domainEdit
-									KeyNavigation.down: transportCbox
 									Accessible.name: qsTr("sip_address_display_name")
 								}
 							}
 							FormItemLayout {
+								visible: false
 								//: "Transport"
 								label: qsTr("transport")
 								Layout.fillWidth: true
@@ -268,11 +266,7 @@ LoginLayout {
 										{text: "TLS", value: LinphoneEnums.TransportType.Tls},
 										{text: "DTLS", value: LinphoneEnums.TransportType.Dtls}
 									]
-									currentIndex: Utils.findIndex(model, function (entry) {
-										return entry.text === SettingsCpp.assistantThirdPartySipAccountTransport.toUpperCase()
-									})
-									KeyNavigation.up: displayName
-									KeyNavigation.down: outboundProxyUriEdit
+									currentIndex: 1
 									Accessible.name: qsTr("transport")
 								}
 							}
@@ -303,7 +297,6 @@ LoginLayout {
 								text: qsTr("assistant_account_login")
 								horizontalAlignment: Text.AlignHCenter
 								verticalAlignment: Text.AlignVCenter
-
 								font {
 									pixelSize: Typography.b1.pixelSize
 									weight: Typography.b1.weight
@@ -339,11 +332,9 @@ LoginLayout {
 							password.errorMessage = ""
 							domain.errorMessage = ""
 							errorText.clear()
-
 							loginDelay.restart()
 						}
 						onPressed: trigger()
-						KeyNavigation.up: connectionId
 						KeyNavigation.tab: tabTarget
 						Timer{
 							id: loginDelay
@@ -355,7 +346,6 @@ LoginLayout {
 									if (passwordEdit.text.length == 0)
 										password.errorMessage = qsTr("assistant_account_login_missing_password")
 									if (domainEdit.text.length == 0)
-										//: "Veuillez saisir un nom de domaine
 										domain.errorMessage = qsTr("assistant_account_login_missing_domain")
 									return
 								}
@@ -373,6 +363,7 @@ LoginLayout {
 					}
 				}
 				ColumnLayout {
+					visible: false
 					Layout.preferredWidth: Utils.getSizeWithScreenRatio(360)
 					Layout.fillHeight: true
 					spacing: Utils.getSizeWithScreenRatio(22)
@@ -393,8 +384,6 @@ LoginLayout {
 								id: connectionIdEdit
 								Layout.preferredWidth: Utils.getSizeWithScreenRatio(360)
 								Accessible.name: qsTr("login_id")
-								KeyNavigation.up: transportCbox
-								KeyNavigation.down: registrarUriEdit
 							}
 						}
 						FormItemLayout {
@@ -406,22 +395,18 @@ LoginLayout {
 								id: registrarUriEdit
 								Layout.preferredWidth: Utils.getSizeWithScreenRatio(360)
 								Accessible.name: qsTr("login_registrar_uri")
-								KeyNavigation.up: outboundProxyUriEdit
-								KeyNavigation.down: connectionIdEdit
 							}
 						}
 						FormItemLayout {
 							id: outboundProxyUri
 							//: "Outbound SIP Proxy URI"
 							label: qsTr("login_proxy_server_url")
-							//: "If this field is filled, the outbound proxy will be enabled automatically. Leave it empty to disable it."
 							tooltip: qsTr("login_proxy_server_url_tooltip")
 							Layout.fillWidth: true
 							contentItem: TextField {
 								id: outboundProxyUriEdit
 								Layout.preferredWidth: Utils.getSizeWithScreenRatio(360)
 								Accessible.name: qsTr("login_proxy_server_url")
-								KeyNavigation.up: registrarUriEdit
 							}
 						}
 					}
@@ -444,25 +429,16 @@ LoginLayout {
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 			anchors.right: parent.right
-			// Layout.leftMargin: Utils.getSizeWithScreenRatio(119)
-			// anchors.leftMargin: Utils.getSizeWithScreenRatio(119)
-			// anchors.rightMargin: - Utils.getSizeWithScreenRatio(8)
 		},
 		Control.StackView {
 			id: rootStackView
-			initialItem: SettingsCpp.assistantGoDirectlyToThirdPartySipAccountLogin ? secondItem : firstItem
+			initialItem: secondItem
 			anchors.left: parent.left
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 			anchors.leftMargin: Utils.getSizeWithScreenRatio(127)
 			width: currentItem ? currentItem.width : 0
 		},
-        // Item {
-		// 	id: sipItem
-		// 	// spacing: Utils.getSizeWithScreenRatio(8)
-        //     anchors.fill: parent
-        //     anchors.rightMargin: Utils.getSizeWithScreenRatio(50) + image.width
-        // },
 		Image {
 			id: image
 			z: -1

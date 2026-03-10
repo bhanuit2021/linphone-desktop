@@ -1,6 +1,5 @@
 pragma Singleton
 import QtQuick
-
 QtObject {
     property var themes: {
         return {
@@ -59,6 +58,14 @@ QtObject {
                 "main500": "#800080",
                 "main600": "#660066",
                 "main700": "#520052"
+            },
+            "voipmatrix": {
+                "main100": "#C5C7E8",
+                "main200": "#9B9ED6",
+                "main300": "#7175C3",
+                "main500": "#3D45AA",
+                "main600": "#4F5CC8",
+                "main700": "#1A1F5C"
             }
         }
     }
