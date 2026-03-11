@@ -26,7 +26,8 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
-          pip install pystache six
+          python3 -m pip install pystache six
+          python -m pip install pystache six
         shell: pwsh
 
       - name: Install Qt
@@ -48,11 +49,14 @@ jobs:
 
       - name: Configure CMake
         run: |
+          $pythonPath = (Get-Command python).Source
+          Write-Host "Python path: $pythonPath"
           cmake -B build `
             -DLINPHONEAPP_APPLICATION_NAME="VoIP Matrix" `
             -DLINPHONEAPP_EXECUTABLE_NAME="voipmatrix" `
             -DCMAKE_BUILD_TYPE=Release `
-            -DENABLE_APP_PACKAGING=ON
+            -DENABLE_APP_PACKAGING=ON `
+            -DPython3_EXECUTABLE="$pythonPath"
         shell: pwsh
 
       - name: Build
